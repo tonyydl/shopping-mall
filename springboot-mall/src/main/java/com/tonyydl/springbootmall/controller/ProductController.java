@@ -1,5 +1,6 @@
 package com.tonyydl.springbootmall.controller;
 
+import com.tonyydl.springbootmall.constant.ProductCategory;
 import com.tonyydl.springbootmall.dto.ProductRequest;
 import com.tonyydl.springbootmall.model.Product;
 import com.tonyydl.springbootmall.service.ProductService;
@@ -18,8 +19,11 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts() {
-        List<Product> productList = productService.getProducts();
+    public ResponseEntity<List<Product>> getProducts(
+            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) String search
+    ) {
+        List<Product> productList = productService.getProducts(category, search);
 
         return ResponseEntity.ok().body(productList);
     }
