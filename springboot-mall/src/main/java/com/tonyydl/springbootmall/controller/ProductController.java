@@ -1,6 +1,7 @@
 package com.tonyydl.springbootmall.controller;
 
 import com.tonyydl.springbootmall.constant.ProductCategory;
+import com.tonyydl.springbootmall.dto.ProductQueryParams;
 import com.tonyydl.springbootmall.dto.ProductRequest;
 import com.tonyydl.springbootmall.model.Product;
 import com.tonyydl.springbootmall.service.ProductService;
@@ -23,7 +24,9 @@ public class ProductController {
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search
     ) {
-        List<Product> productList = productService.getProducts(category, search);
+        ProductQueryParams productQueryParams = new ProductQueryParams(category, search);
+
+        List<Product> productList = productService.getProducts(productQueryParams);
 
         return ResponseEntity.ok().body(productList);
     }
