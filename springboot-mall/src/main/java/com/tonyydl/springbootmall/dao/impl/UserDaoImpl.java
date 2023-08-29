@@ -1,6 +1,7 @@
 package com.tonyydl.springbootmall.dao.impl;
 
 import com.tonyydl.springbootmall.dao.UserDao;
+import com.tonyydl.springbootmall.dto.UserLoginRequest;
 import com.tonyydl.springbootmall.dto.UserRegisterRequest;
 import com.tonyydl.springbootmall.model.User;
 import com.tonyydl.springbootmall.rowmapper.UserRowMapper;

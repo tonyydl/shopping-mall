@@ -1,6 +1,7 @@
 package com.tonyydl.springbootmall.service.impl;
 
 import com.tonyydl.springbootmall.dao.UserDao;
+import com.tonyydl.springbootmall.dto.UserLoginRequest;
 import com.tonyydl.springbootmall.dto.UserRegisterRequest;
 import com.tonyydl.springbootmall.model.User;
 import com.tonyydl.springbootmall.service.UserService;
@@ -36,5 +37,22 @@ public class UserServiceImpl implements UserService {
 
         // 創建帳號
         return userDao.createUser(userRegisterRequest);
+    }
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+
+        if (user == null) {
+            log.warn("email {} hasn't been registered yet!", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (user.getPassword().equals(userLoginRequest.getPassword())) {
+            return user;
+        } else {
+            log.warn("email {} password are incorrect!", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }
