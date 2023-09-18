@@ -1,5 +1,6 @@
-package com.tonyydl.springbootmall.dto;
+package com.tonyydl.springbootmall.data.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
@@ -13,8 +14,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateOrderRequest {
+public class CreateOrderRequestDTO {
 
     @NotEmpty
-    private List<BuyItem> buyItemList;
+    @JsonProperty("buyItemList")
+    private List<BuyItemDTO> buyItemDTOList;
 }

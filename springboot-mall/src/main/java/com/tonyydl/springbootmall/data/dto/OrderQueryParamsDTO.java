@@ -1,4 +1,4 @@
-package com.tonyydl.springbootmall.dto;
+package com.tonyydl.springbootmall.data.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderQueryParams {
+public class OrderQueryParamsDTO {
     private Integer userId;
     private Integer limit;
     private Integer offset;

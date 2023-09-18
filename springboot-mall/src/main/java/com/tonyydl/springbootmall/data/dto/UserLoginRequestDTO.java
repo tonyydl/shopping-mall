@@ -1,4 +1,4 @@
-package com.tonyydl.springbootmall.dto;
+package com.tonyydl.springbootmall.data.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterRequest {
+public class UserLoginRequestDTO {
 
     @NotBlank
     @Email

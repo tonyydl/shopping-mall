@@ -2,8 +2,9 @@ package com.tonyydl.springbootmall.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tonyydl.springbootmall.dto.BuyItem;
-import com.tonyydl.springbootmall.dto.CreateOrderRequest;
+
+import com.tonyydl.springbootmall.data.dto.BuyItemDTO;
+import com.tonyydl.springbootmall.data.dto.CreateOrderRequestDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,8 +15,8 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,22 +35,14 @@ public class OrderControllerTest {
     @Transactional
     @Test
     public void createOrder_success() throws Exception {
-        CreateOrderRequest createOrderRequest = new CreateOrderRequest();
-        List<BuyItem> buyItemList = new ArrayList<>();
+        CreateOrderRequestDTO createOrderRequestDTO = CreateOrderRequestDTO.builder()
+                .buyItemDTOList(Arrays.asList(
+                        BuyItemDTO.builder().productId(1).quantity(5).build(),
+                        BuyItemDTO.builder().productId(2).quantity(2).build()
+                ))
+                .build();
 
-        BuyItem buyItem1 = new BuyItem();
-        buyItem1.setProductId(1);
-        buyItem1.setQuantity(5);
-        buyItemList.add(buyItem1);
-
-        BuyItem buyItem2 = new BuyItem();
-        buyItem2.setProductId(2);
-        buyItem2.setQuantity(2);
-        buyItemList.add(buyItem2);
-
-        createOrderRequest.setBuyItemList(buyItemList);
-
-        String json = objectMapper.writeValueAsString(createOrderRequest);
+        String json = objectMapper.writeValueAsString(createOrderRequestDTO);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/{userId}/orders", 1)
@@ -61,7 +54,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.orderId", notNullValue()))
                 .andExpect(jsonPath("$.userId", equalTo(1)))
                 .andExpect(jsonPath("$.totalAmount", equalTo(750)))
-                .andExpect(jsonPath("$.orderItemList", hasSize(2)))
+                .andExpect(jsonPath("$.orderItemDTOList", hasSize(2)))
                 .andExpect(jsonPath("$.createdDate", notNullValue()))
                 .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
     }
@@ -69,11 +62,9 @@ public class OrderControllerTest {
     @Transactional
     @Test
     public void createOrder_illegalArgument_emptyBuyItemList() throws Exception {
-        CreateOrderRequest createOrderRequest = new CreateOrderRequest();
-        List<BuyItem> buyItemList = new ArrayList<>();
-        createOrderRequest.setBuyItemList(buyItemList);
+        CreateOrderRequestDTO createOrderRequestDTO = CreateOrderRequestDTO.builder().buyItemDTOList(Collections.emptyList()).build();
 
-        String json = objectMapper.writeValueAsString(createOrderRequest);
+        String json = objectMapper.writeValueAsString(createOrderRequestDTO);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/{userId}/orders", 1)
@@ -87,15 +78,10 @@ public class OrderControllerTest {
     @Transactional
     @Test
     public void createOrder_userNotExist() throws Exception {
-        CreateOrderRequest createOrderRequest = new CreateOrderRequest();
-        List<BuyItem> buyItemList = new ArrayList<>();
-
-        BuyItem buyItem1 = new BuyItem();
-        buyItem1.setProductId(1);
-        buyItem1.setQuantity(1);
-        buyItemList.add(buyItem1);
-
-        createOrderRequest.setBuyItemList(buyItemList);
+        CreateOrderRequestDTO createOrderRequest = CreateOrderRequestDTO.builder()
+                .buyItemDTOList(Collections.singletonList(
+                        BuyItemDTO.builder().productId(1).quantity(1).build()
+                )).build();
 
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
@@ -111,15 +97,9 @@ public class OrderControllerTest {
     @Transactional
     @Test
     public void createOrder_productNotExist() throws Exception {
-        CreateOrderRequest createOrderRequest = new CreateOrderRequest();
-        List<BuyItem> buyItemList = new ArrayList<>();
-
-        BuyItem buyItem1 = new BuyItem();
-        buyItem1.setProductId(100);
-        buyItem1.setQuantity(1);
-        buyItemList.add(buyItem1);
-
-        createOrderRequest.setBuyItemList(buyItemList);
+        CreateOrderRequestDTO createOrderRequest = CreateOrderRequestDTO.builder()
+                .buyItemDTOList(Collections.singletonList(BuyItemDTO.builder().productId(100).quantity(1).build()))
+                .build();
 
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
@@ -135,15 +115,9 @@ public class OrderControllerTest {
     @Transactional
     @Test
     public void createOrder_stockNotEnough() throws Exception {
-        CreateOrderRequest createOrderRequest = new CreateOrderRequest();
-        List<BuyItem> buyItemList = new ArrayList<>();
-
-        BuyItem buyItem1 = new BuyItem();
-        buyItem1.setProductId(1);
-        buyItem1.setQuantity(10000);
-        buyItemList.add(buyItem1);
-
-        createOrderRequest.setBuyItemList(buyItemList);
+        CreateOrderRequestDTO createOrderRequest = CreateOrderRequestDTO.builder()
+                .buyItemDTOList(Arrays.asList(BuyItemDTO.builder().productId(1).quantity(10000).build()))
+                .build();
 
         String json = objectMapper.writeValueAsString(createOrderRequest);
 
@@ -171,13 +145,13 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.results[0].orderId", notNullValue()))
                 .andExpect(jsonPath("$.results[0].userId", equalTo(1)))
                 .andExpect(jsonPath("$.results[0].totalAmount", equalTo(100000)))
-                .andExpect(jsonPath("$.results[0].orderItemList", hasSize(1)))
+                .andExpect(jsonPath("$.results[0].orderItemDTOList", hasSize(1)))
                 .andExpect(jsonPath("$.results[0].createdDate", notNullValue()))
                 .andExpect(jsonPath("$.results[0].lastModifiedDate", notNullValue()))
                 .andExpect(jsonPath("$.results[1].orderId", notNullValue()))
                 .andExpect(jsonPath("$.results[1].userId", equalTo(1)))
                 .andExpect(jsonPath("$.results[1].totalAmount", equalTo(500690)))
-                .andExpect(jsonPath("$.results[1].orderItemList", hasSize(3)))
+                .andExpect(jsonPath("$.results[1].orderItemDTOList", hasSize(3)))
                 .andExpect(jsonPath("$.results[1].createdDate", notNullValue()))
                 .andExpect(jsonPath("$.results[1].lastModifiedDate", notNullValue()));
     }

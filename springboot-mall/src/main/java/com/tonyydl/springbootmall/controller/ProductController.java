@@ -1,15 +1,14 @@
 package com.tonyydl.springbootmall.controller;
 
 import com.tonyydl.springbootmall.constant.ProductCategory;
-import com.tonyydl.springbootmall.dto.ProductQueryParams;
-import com.tonyydl.springbootmall.dto.ProductRequest;
-import com.tonyydl.springbootmall.model.Product;
+import com.tonyydl.springbootmall.data.dto.ProductQueryParamsDTO;
+import com.tonyydl.springbootmall.data.dto.ProductRequestDTO;
+import com.tonyydl.springbootmall.data.po.ProductPO;
 import com.tonyydl.springbootmall.service.ProductService;
 import com.tonyydl.springbootmall.util.Page;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,11 +20,14 @@ import java.util.List;
 @RestController
 public class ProductController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping("/products")
-    public ResponseEntity<Page<Product>> getProducts(
+    public ResponseEntity<Page<ProductPO>> getProducts(
             // 查詢條件 Filtering
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search,
@@ -38,60 +40,60 @@ public class ProductController {
             @RequestParam(defaultValue = "5") @Max(1_000) @Min(0) Integer limit,
             @RequestParam(defaultValue = "0") @Min(0) Integer offset
     ) {
-        ProductQueryParams productQueryParams = new ProductQueryParams(category, search, orderBy, sort, limit, offset);
+        ProductQueryParamsDTO productQueryParamsDTO = new ProductQueryParamsDTO(category, search, orderBy, sort, limit, offset);
 
         // 取得 product list
-        List<Product> productList = productService.getProducts(productQueryParams);
+        List<ProductPO> productPOList = productService.getProducts(productQueryParamsDTO);
 
         // 取得 product 總數
-        Integer total = productService.countProduct(productQueryParams);
+        Integer total = productService.countProduct(productQueryParamsDTO);
 
         // 分頁
-        Page<Product> page = new Page<>();
+        Page<ProductPO> page = new Page<>();
         page.setLimit(limit);
         page.setOffset(offset);
         page.setTotal(total);
-        page.setResults(productList);
+        page.setResults(productPOList);
 
         return ResponseEntity.ok().body(page);
     }
 
     @GetMapping("/products/{productId}")
-    public ResponseEntity<Product> getProduct(@PathVariable Integer productId) {
-        Product product = productService.getProductById(productId);
+    public ResponseEntity<ProductPO> getProduct(@PathVariable Integer productId) {
+        ProductPO productPO = productService.getProductById(productId);
 
-        if (product != null) {
-            return ResponseEntity.ok().body(product);
+        if (productPO != null) {
+            return ResponseEntity.ok().body(productPO);
         }
 
         return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/products")
-    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
-        Integer productId = productService.createProduct(productRequest);
+    public ResponseEntity<ProductPO> createProduct(@RequestBody @Valid ProductRequestDTO productRequestDTO) {
+        Integer productId = productService.createProduct(productRequestDTO);
 
-        Product product = productService.getProductById(productId);
+        ProductPO productPO = productService.getProductById(productId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productPO);
     }
 
     @PutMapping("/products/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
-                                                 @RequestBody @Valid ProductRequest productRequest) {
+    public ResponseEntity<ProductPO> updateProduct(@PathVariable Integer productId,
+                                                   @RequestBody @Valid ProductRequestDTO productRequestDTO) {
         // 檢查 product 是否存在
-        Product product = productService.getProductById(productId);
+        ProductPO productPO = productService.getProductById(productId);
 
-        if (product == null) {
+        if (productPO == null) {
             return ResponseEntity.notFound().build();
         }
 
         // 修改商品的數據
-        productService.updateProduct(productId, productRequest);
+        productService.updateProduct(productId, productRequestDTO);
 
-        Product updatedProduct = productService.getProductById(productId);
+        ProductPO updatedProductPO = productService.getProductById(productId);
 
-        return ResponseEntity.ok().body(updatedProduct);
+        return ResponseEntity.ok().body(updatedProductPO);
     }
 
     @DeleteMapping("/products/{productId}")

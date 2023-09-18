@@ -1,25 +1,28 @@
 package com.tonyydl.springbootmall.service.impl;
 
-import com.tonyydl.springbootmall.dao.OrderDao;
-import com.tonyydl.springbootmall.dao.ProductDao;
-import com.tonyydl.springbootmall.dao.UserDao;
-import com.tonyydl.springbootmall.dto.BuyItem;
-import com.tonyydl.springbootmall.dto.CreateOrderRequest;
-import com.tonyydl.springbootmall.dto.OrderQueryParams;
-import com.tonyydl.springbootmall.model.Order;
-import com.tonyydl.springbootmall.model.OrderItem;
-import com.tonyydl.springbootmall.model.Product;
-import com.tonyydl.springbootmall.model.User;
+import com.tonyydl.springbootmall.data.dto.BuyItemDTO;
+import com.tonyydl.springbootmall.data.dto.CreateOrderRequestDTO;
+import com.tonyydl.springbootmall.data.dto.OrderItemDTO;
+import com.tonyydl.springbootmall.data.dto.OrderQueryParamsDTO;
+import com.tonyydl.springbootmall.data.po.OrderPO;
+import com.tonyydl.springbootmall.data.po.OrderItemPO;
+import com.tonyydl.springbootmall.data.po.ProductPO;
+import com.tonyydl.springbootmall.repository.OrderItemRepository;
+import com.tonyydl.springbootmall.repository.OrderRepository;
+import com.tonyydl.springbootmall.repository.ProductRepository;
+import com.tonyydl.springbootmall.repository.UserRepository;
 import com.tonyydl.springbootmall.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -27,90 +30,111 @@ public class OrderServiceImpl implements OrderService {
 
     private final static Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
-    @Autowired
-    private OrderDao orderDao;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private UserDao userDao;
-
-    @Override
-    public Integer countOrder(OrderQueryParams orderQueryParams) {
-        return orderDao.countOrder(orderQueryParams);
+    public OrderServiceImpl(UserRepository userRepository,
+                            ProductRepository productRepository,
+                            OrderRepository orderRepository,
+                            OrderItemRepository orderItemRepository) {
+        this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
-        List<Order> orderList = orderDao.getOrders(orderQueryParams);
+    public Integer countOrder(OrderQueryParamsDTO orderQueryParamsDTO) {
+        return orderRepository.countByUserId(orderQueryParamsDTO.getUserId());
+    }
 
-        for (Order order : orderList) {
-            List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(order.getOrderId());
+    @Override
+    public List<OrderPO> getOrders(OrderQueryParamsDTO orderQueryParamsDTO) {
+        int page = orderQueryParamsDTO.getOffset() / orderQueryParamsDTO.getLimit();
+        Pageable pageable = PageRequest.of(page, orderQueryParamsDTO.getLimit());
+        List<OrderPO> orderList = orderRepository.findByUserIdOrderByCreatedDateDesc(orderQueryParamsDTO.getUserId(), pageable);
 
-            order.setOrderItemList(orderItemList);
+        for (OrderPO orderPO : orderList) {
+            List<OrderItemDTO> orderItemDTOList = orderItemRepository.findOrderItemsByOrderId(orderPO.getOrderId());
+
+            orderPO.setOrderItemDTOList(orderItemDTOList);
         }
         return orderList;
     }
 
     @Override
-    public Order getOrderById(Integer orderId) {
-        Order order = orderDao.getOrderById(orderId);
+    public OrderPO getOrderById(Integer orderId) {
+        OrderPO orderPO = orderRepository.findById(orderId).orElseThrow(() -> {
+            log.warn("該 orderId {} 不存在", orderId);
+            return new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        });
 
-        List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(orderId);
+        List<OrderItemDTO> orderItemDTOList = orderItemRepository.findOrderItemsByOrderId(orderId);
 
-        order.setOrderItemList(orderItemList);
+        orderPO.setOrderItemDTOList(orderItemDTOList);
 
-        return order;
+        return orderPO;
     }
 
     @Transactional
     @Override
-    public Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest) {
+    public Integer createOrder(Integer userId, CreateOrderRequestDTO createOrderRequestDTO) {
         // 檢查 user 是否存在
-        User user = userDao.getUserById(userId);
-        if (user == null) {
-            log.warn("該 userId {} 不存在", userId);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        userRepository.findById(userId).orElseThrow(() -> {
+            log.warn("userId {} 不存在", userId);
+            return new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        });
 
         int totalAmount = 0;
-        List<OrderItem> orderItemList = new ArrayList<>();
+        List<OrderItemPO> orderItemPOList = new ArrayList<>();
 
-        for (BuyItem buyItem : createOrderRequest.getBuyItemList()) {
-            Product product = productDao.getProductById(buyItem.getProductId());
+        for (BuyItemDTO buyItemDTO : createOrderRequestDTO.getBuyItemDTOList()) {
+            // 檢查 product 是否存在
+            ProductPO productPO = productRepository.findById(buyItemDTO.getProductId()).orElseThrow(() -> {
+                log.warn("商品 {} 不存在", buyItemDTO.getProductId());
+                return new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            });
 
-            // 檢查 product 是否存在、庫存是否足夠
-            if (product == null) {
-                log.warn("商品 {} 不存在", buyItem.getProductId());
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            } else if (product.getStock() < buyItem.getQuantity()) {
+            // 檢查 product 庫存是否足夠
+            if (productPO.getStock() < buyItemDTO.getQuantity()) {
                 log.warn("商品 {} 庫存數量不足，無法購買。剩餘庫存 {}，欲購買數量 {}",
-                        buyItem.getProductId(), product.getStock(), buyItem.getQuantity());
+                        buyItemDTO.getProductId(), productPO.getStock(), buyItemDTO.getQuantity());
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
 
             // 扣除商品庫存
-            productDao.updateStock(product.getProductId(), product.getStock() - buyItem.getQuantity());
+            int updatedStock = productPO.getStock() - buyItemDTO.getQuantity();
+            productPO.setStock(updatedStock);
+            productRepository.save(productPO);
 
             // 計算總價錢
-            int amount = buyItem.getQuantity() * product.getPrice();
+            int amount = buyItemDTO.getQuantity() * productPO.getPrice();
             totalAmount += amount;
 
             // 轉換 BuyItem to OrderItem
-            OrderItem orderItem = new OrderItem();
-            orderItem.setProductId(buyItem.getProductId());
-            orderItem.setQuantity(buyItem.getQuantity());
-            orderItem.setAmount(amount);
+            OrderItemPO orderItemPO = new OrderItemPO();
+            orderItemPO.setProductId(buyItemDTO.getProductId());
+            orderItemPO.setQuantity(buyItemDTO.getQuantity());
+            orderItemPO.setAmount(amount);
 
-            orderItemList.add(orderItem);
+            orderItemPOList.add(orderItemPO);
         }
 
-        // 創建訂單
-        Integer orderId = orderDao.createOrder(userId, totalAmount);
+        Date now = new Date();
+        OrderPO orderPO = OrderPO.builder()
+                .userId(userId)
+                .totalAmount(totalAmount)
+                .createdDate(now)
+                .lastModifiedDate(now)
+                .build();
+        OrderPO savedOrderPO = orderRepository.save(orderPO);
 
-        orderDao.createOrderItems(orderId, orderItemList);
+        orderItemPOList.forEach(orderItem -> orderItem.setOrderId(savedOrderPO.getOrderId()));
 
-        return orderId;
+        orderItemRepository.saveAll(orderItemPOList);
+
+        return savedOrderPO.getOrderId();
     }
 }

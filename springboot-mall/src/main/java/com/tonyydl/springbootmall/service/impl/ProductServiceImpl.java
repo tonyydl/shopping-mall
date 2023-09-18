@@ -1,48 +1,116 @@
 package com.tonyydl.springbootmall.service.impl;
 
-import com.tonyydl.springbootmall.dao.ProductDao;
-import com.tonyydl.springbootmall.dto.ProductQueryParams;
-import com.tonyydl.springbootmall.dto.ProductRequest;
-import com.tonyydl.springbootmall.model.Product;
+import com.tonyydl.springbootmall.data.dto.ProductQueryParamsDTO;
+import com.tonyydl.springbootmall.data.dto.ProductRequestDTO;
+import com.tonyydl.springbootmall.data.po.ProductPO;
+import com.tonyydl.springbootmall.repository.ProductRepository;
 import com.tonyydl.springbootmall.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.tonyydl.springbootmall.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired
-    private ProductDao productDao;
+    private final static Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 
-    @Override
-    public Integer countProduct(ProductQueryParams productQueryParams) {
-        return productDao.countProduct(productQueryParams);
+    private final ProductRepository productRepository;
+
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Override
-    public List<Product> getProducts(ProductQueryParams productQueryParams) {
-        return productDao.getProducts(productQueryParams);
+    public Integer countProduct(ProductQueryParamsDTO productQueryParamsDTO) {
+        return productRepository.countByCategoryAndProductNameContainingIgnoreCase(
+                productQueryParamsDTO.category(),
+                productQueryParamsDTO.search()
+        );
     }
 
     @Override
-    public Product getProductById(Integer productId) {
-        return productDao.getProductById(productId);
+    public List<ProductPO> getProducts(ProductQueryParamsDTO productQueryParamsDTO) {
+        int page = productQueryParamsDTO.offset() / productQueryParamsDTO.limit();
+        Pageable pageable = PageRequest.of(page, productQueryParamsDTO.limit(), createSort(productQueryParamsDTO));
+        return productRepository.findProductsByCategoryAndProductNameContaining(
+                productQueryParamsDTO.category(),
+                productQueryParamsDTO.search(),
+                pageable
+        );
+    }
+
+    private Sort createSort(ProductQueryParamsDTO productQueryParamsDTO) {
+        if (productQueryParamsDTO != null) {
+            String orderBy = productQueryParamsDTO.orderBy();
+            if (orderBy != null) {
+                String orderByCamelCase = StringUtils.makeCamelCase(orderBy);
+                String sort = productQueryParamsDTO.sort();
+                Sort.Direction sortDirection = Sort.Direction.fromOptionalString(sort.toUpperCase())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                return Sort.by(sortDirection, orderByCamelCase);
+            }
+        }
+
+        return null;
     }
 
     @Override
-    public Integer createProduct(ProductRequest productRequest) {
-        return productDao.createProduct(productRequest);
+    public ProductPO getProductById(Integer productId) {
+        return productRepository.findById(productId).orElseThrow(() -> {
+            log.warn("productId {} 不存在", productId);
+            return new ResponseStatusException(HttpStatus.NOT_FOUND);
+        });
     }
 
     @Override
-    public void updateProduct(Integer productId, ProductRequest productRequest) {
-        productDao.updateProduct(productId, productRequest);
+    public Integer createProduct(ProductRequestDTO productRequestDTO) {
+        Date now = new Date();
+        ProductPO productPO = ProductPO
+                .builder()
+                .productName(productRequestDTO.getProductName())
+                .category(productRequestDTO.getCategory())
+                .imageUrl(productRequestDTO.getImageUrl())
+                .price(productRequestDTO.getPrice())
+                .stock(productRequestDTO.getStock())
+                .description(productRequestDTO.getDescription())
+                .createdDate(now)
+                .lastModifiedDate(now)
+                .build();
+
+        ProductPO savedProductPO = productRepository.save(productPO);
+
+        return savedProductPO.getProductId();
+    }
+
+    @Override
+    public void updateProduct(Integer productId, ProductRequestDTO productRequestDTO) {
+        ProductPO productPO = productRepository.findById(productId).orElseThrow(() -> {
+            log.warn("productId {} 不存在", productId);
+            return new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        });
+
+        productPO.setProductName(productRequestDTO.getProductName());
+        productPO.setCategory(productRequestDTO.getCategory());
+        productPO.setImageUrl(productRequestDTO.getImageUrl());
+        productPO.setPrice(productRequestDTO.getPrice());
+        productPO.setStock(productRequestDTO.getStock());
+        productPO.setDescription(productRequestDTO.getDescription());
+        productPO.setLastModifiedDate(new Date());
+
+        productRepository.save(productPO);
     }
 
     @Override
     public void deleteProductById(Integer productId) {
-        productDao.deleteProduct(productId);
+        productRepository.deleteById(productId);
     }
 }

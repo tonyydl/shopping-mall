@@ -2,7 +2,7 @@ package com.tonyydl.springbootmall.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tonyydl.springbootmall.constant.ProductCategory;
-import com.tonyydl.springbootmall.dto.ProductRequest;
+import com.tonyydl.springbootmall.data.dto.ProductRequestDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -59,14 +59,15 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void createProduct_success() throws Exception {
-        ProductRequest productRequest = new ProductRequest();
-        productRequest.setProductName("test food product");
-        productRequest.setCategory(ProductCategory.FOOD);
-        productRequest.setImageUrl("http://test.com");
-        productRequest.setPrice(100);
-        productRequest.setStock(2);
+        ProductRequestDTO productRequestDTO = ProductRequestDTO.builder()
+                .productName("test food product")
+                .category(ProductCategory.FOOD)
+                .imageUrl("http://test.com")
+                .price(100)
+                .stock(2)
+                .build();
 
-        String json = objectMapper.writeValueAsString(productRequest);
+        String json = objectMapper.writeValueAsString(productRequestDTO);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/products")
@@ -88,10 +89,9 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void createProduct_illegalArgument() throws Exception {
-        ProductRequest productRequest = new ProductRequest();
-        productRequest.setProductName("test food product");
+        ProductRequestDTO productRequestDTO = ProductRequestDTO.builder().productName("test food product").build();
 
-        String json = objectMapper.writeValueAsString(productRequest);
+        String json = objectMapper.writeValueAsString(productRequestDTO);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/products")
@@ -106,14 +106,15 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void updateProduct_success() throws Exception {
-        ProductRequest productRequest = new ProductRequest();
-        productRequest.setProductName("test food product");
-        productRequest.setCategory(ProductCategory.FOOD);
-        productRequest.setImageUrl("http://test.com");
-        productRequest.setPrice(100);
-        productRequest.setStock(2);
+        ProductRequestDTO productRequestDTO = ProductRequestDTO.builder()
+                .productName("test food product")
+                .category(ProductCategory.FOOD)
+                .imageUrl("http://test.com")
+                .price(100)
+                .stock(2)
+                .build();
 
-        String json = objectMapper.writeValueAsString(productRequest);
+        String json = objectMapper.writeValueAsString(productRequestDTO);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/products/{productId}", 3)
@@ -135,10 +136,9 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void updateProduct_illegalArgument() throws Exception {
-        ProductRequest productRequest = new ProductRequest();
-        productRequest.setProductName("test food product");
+        ProductRequestDTO productRequestDTO = ProductRequestDTO.builder().productName("test food product").build();
 
-        String json = objectMapper.writeValueAsString(productRequest);
+        String json = objectMapper.writeValueAsString(productRequestDTO);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/products/{productId}", 3)
@@ -153,14 +153,15 @@ public class ProductControllerTest {
     @Transactional
     @Test
     public void updateProduct_productNotFound() throws Exception {
-        ProductRequest productRequest = new ProductRequest();
-        productRequest.setProductName("test food product");
-        productRequest.setCategory(ProductCategory.FOOD);
-        productRequest.setImageUrl("http://test.com");
-        productRequest.setPrice(100);
-        productRequest.setStock(2);
+        ProductRequestDTO productRequestDTO = ProductRequestDTO.builder()
+                .productName("test food product")
+                .category(ProductCategory.FOOD)
+                .imageUrl("http://test.com")
+                .price(100)
+                .stock(2)
+                .build();
 
-        String json = objectMapper.writeValueAsString(productRequest);
+        String json = objectMapper.writeValueAsString(productRequestDTO);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put("/products/{productId}", 20000)

@@ -1,13 +1,13 @@
 package com.tonyydl.springbootmall.service;
 
-import com.tonyydl.springbootmall.dto.UserLoginRequest;
-import com.tonyydl.springbootmall.dto.UserRegisterRequest;
-import com.tonyydl.springbootmall.model.User;
+import com.tonyydl.springbootmall.data.dto.UserLoginRequestDTO;
+import com.tonyydl.springbootmall.data.dto.UserRegisterRequestDTO;
+import com.tonyydl.springbootmall.data.po.UserPO;
 
 public interface UserService {
-    User getUserById(Integer userId);
+    UserPO getUserById(Integer userId);
 
-    Integer register(UserRegisterRequest userRegisterRequest);
+    Integer register(UserRegisterRequestDTO userRegisterRequestDTO);
 
-    User login(UserLoginRequest userLoginRequest);
+    UserPO login(UserLoginRequestDTO userLoginRequestDTO);
 }

@@ -1,17 +1,17 @@
 package com.tonyydl.springbootmall.service;
 
-import com.tonyydl.springbootmall.dto.CreateOrderRequest;
-import com.tonyydl.springbootmall.dto.OrderQueryParams;
-import com.tonyydl.springbootmall.model.Order;
+import com.tonyydl.springbootmall.data.dto.CreateOrderRequestDTO;
+import com.tonyydl.springbootmall.data.dto.OrderQueryParamsDTO;
+import com.tonyydl.springbootmall.data.po.OrderPO;
 
 import java.util.List;
 
 public interface OrderService {
-    Integer countOrder(OrderQueryParams orderQueryParams);
+    Integer countOrder(OrderQueryParamsDTO orderQueryParamsDTO);
 
-    List<Order> getOrders(OrderQueryParams orderQueryParams);
+    List<OrderPO> getOrders(OrderQueryParamsDTO orderQueryParamsDTO);
 
-    Order getOrderById(Integer orderId);
+    OrderPO getOrderById(Integer orderId);
 
-    Integer createOrder(Integer userId, CreateOrderRequest createOrderRequest);
+    Integer createOrder(Integer userId, CreateOrderRequestDTO createOrderRequestDTO);
 }

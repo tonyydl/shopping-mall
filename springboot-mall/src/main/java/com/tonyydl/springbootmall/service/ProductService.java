@@ -1,22 +1,22 @@
 package com.tonyydl.springbootmall.service;
 
-import com.tonyydl.springbootmall.dto.ProductQueryParams;
-import com.tonyydl.springbootmall.dto.ProductRequest;
-import com.tonyydl.springbootmall.model.Product;
+import com.tonyydl.springbootmall.data.dto.ProductQueryParamsDTO;
+import com.tonyydl.springbootmall.data.dto.ProductRequestDTO;
+import com.tonyydl.springbootmall.data.po.ProductPO;
 
 import java.util.List;
 
 public interface ProductService {
 
-    Integer countProduct(ProductQueryParams productQueryParams);
+    Integer countProduct(ProductQueryParamsDTO productQueryParamsDTO);
 
-    List<Product> getProducts(ProductQueryParams productQueryParams);
+    List<ProductPO> getProducts(ProductQueryParamsDTO productQueryParamsDTO);
 
-    Product getProductById(Integer productId);
+    ProductPO getProductById(Integer productId);
 
-    Integer createProduct(ProductRequest productRequest);
+    Integer createProduct(ProductRequestDTO productRequestDTO);
 
-    void updateProduct(Integer productId, ProductRequest productRequest);
+    void updateProduct(Integer productId, ProductRequestDTO productRequestDTO);
 
     void deleteProductById(Integer productId);
 }

@@ -1,4 +1,4 @@
-package com.tonyydl.springbootmall.dto;
+package com.tonyydl.springbootmall.data.dto;
 
 import com.tonyydl.springbootmall.constant.ProductCategory;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductRequest {
+public class ProductRequestDTO {
 
     @NotNull
     private String productName;
