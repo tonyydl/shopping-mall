@@ -112,7 +112,7 @@ public class UserControllerTest {
         userLoginRequest.setEmail(userRegisterRequest.getEmail());
         userLoginRequest.setPassword(userRegisterRequest.getPassword());
 
-        String json = objectMapper.writeValueAsString(userRegisterRequest);
+        String json = objectMapper.writeValueAsString(userLoginRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post("/users/login")
