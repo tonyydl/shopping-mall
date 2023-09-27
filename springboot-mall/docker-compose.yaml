@@ -1,0 +1,13 @@
+version: "1.0"
+
+services:
+  mysql:
+    image: bitnami/mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=springboot
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    networks:
+      - default
