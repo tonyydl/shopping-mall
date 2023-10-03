@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -53,8 +52,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderPO> getOrders(OrderQueryParamsDTO orderQueryParamsDTO) {
-        int page = orderQueryParamsDTO.getOffset() / orderQueryParamsDTO.getLimit();
-        Pageable pageable = PageRequest.of(page, orderQueryParamsDTO.getLimit());
+        Pageable pageable = PageRequest.of(orderQueryParamsDTO.getPage(), orderQueryParamsDTO.getSize());
         List<OrderPO> orderList = orderRepository.findByUserIdOrderByCreatedDateDesc(orderQueryParamsDTO.getUserId(), pageable);
 
         for (OrderPO orderPO : orderList) {

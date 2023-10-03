@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderQueryParamsDTO {
     private Integer userId;
-    private Integer limit;
-    private Integer offset;
+    private Integer size;
+    private Integer page;
 }

@@ -138,8 +138,8 @@ public class OrderControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
+                .andExpect(jsonPath("$.size", notNullValue()))
+                .andExpect(jsonPath("$.page", notNullValue()))
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(2)))
                 .andExpect(jsonPath("$.results[0].orderId", notNullValue()))
@@ -160,13 +160,13 @@ public class OrderControllerTest {
     public void getOrders_pagination() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/users/{userId}/orders", 1)
-                .param("limit", "2")
-                .param("offset", "2");
+                .param("size", "2")
+                .param("page", "2");
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
+                .andExpect(jsonPath("$.size", notNullValue()))
+                .andExpect(jsonPath("$.page", notNullValue()))
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(0)));
     }
@@ -178,8 +178,8 @@ public class OrderControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
+                .andExpect(jsonPath("$.size", notNullValue()))
+                .andExpect(jsonPath("$.page", notNullValue()))
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(0)));
     }
@@ -191,8 +191,8 @@ public class OrderControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
+                .andExpect(jsonPath("$.size", notNullValue()))
+                .andExpect(jsonPath("$.page", notNullValue()))
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(0)));
     }

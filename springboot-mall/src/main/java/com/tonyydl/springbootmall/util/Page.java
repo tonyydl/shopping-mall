@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Page<T> {
-    private Integer limit;
-    private Integer offset;
+    private Integer size;
+    private Integer page;
     private Integer total;
     private List<T> results;
 }

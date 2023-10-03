@@ -26,13 +26,13 @@ public class OrderController {
     @GetMapping("/users/{userId}/orders")
     public ResponseEntity<Page<OrderPO>> getOrders(
             @PathVariable Integer userId,
-            @RequestParam(defaultValue = "10") @Max(1000) @Min(0) Integer limit,
-            @RequestParam(defaultValue = "0") @Min(0) Integer offset
+            @RequestParam(defaultValue = "10") @Max(1000) @Min(0) Integer size,
+            @RequestParam(defaultValue = "0") @Min(0) Integer page
     ) {
         OrderQueryParamsDTO orderQueryParamsDTO = OrderQueryParamsDTO.builder()
                 .userId(userId)
-                .limit(limit)
-                .offset(offset)
+                .size(size)
+                .page(page)
                 .build();
 
         // 取得 order list
@@ -42,13 +42,13 @@ public class OrderController {
         Integer count = orderService.countOrder(orderQueryParamsDTO);
 
         // 分頁
-        Page<OrderPO> page = new Page<>();
-        page.setLimit(limit);
-        page.setOffset(offset);
-        page.setTotal(count);
-        page.setResults(orderList);
+        Page<OrderPO> pagination = new Page<>();
+        pagination.setSize(size);
+        pagination.setPage(page);
+        pagination.setTotal(count);
+        pagination.setResults(orderList);
 
-        return ResponseEntity.ok().body(page);
+        return ResponseEntity.ok().body(pagination);
     }
 
     @PostMapping("/users/{userId}/orders")

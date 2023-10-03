@@ -202,8 +202,8 @@ public class ProductControllerTest {
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
+                .andExpect(jsonPath("$.size", notNullValue()))
+                .andExpect(jsonPath("$.page", notNullValue()))
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(5)));
     }
@@ -217,8 +217,8 @@ public class ProductControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
+                .andExpect(jsonPath("$.size", notNullValue()))
+                .andExpect(jsonPath("$.page", notNullValue()))
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(2)));
     }
@@ -233,8 +233,8 @@ public class ProductControllerTest {
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
+                .andExpect(jsonPath("$.size", notNullValue()))
+                .andExpect(jsonPath("$.page", notNullValue()))
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(5)))
                 .andExpect(jsonPath("$.results[0].productId", equalTo(6)))
@@ -248,17 +248,17 @@ public class ProductControllerTest {
     public void getProducts_pagination() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get("/products")
-                .param("limit", "2")
-                .param("offset", "2");
+                .param("size", "2")
+                .param("page", "2");
 
         mockMvc.perform(requestBuilder)
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.limit", notNullValue()))
-                .andExpect(jsonPath("$.offset", notNullValue()))
+                .andExpect(jsonPath("$.size", notNullValue()))
+                .andExpect(jsonPath("$.page", notNullValue()))
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(2)))
-                .andExpect(jsonPath("$.results[0].productId", equalTo(5)))
-                .andExpect(jsonPath("$.results[1].productId", equalTo(4)));
+                .andExpect(jsonPath("$.results[0].productId", equalTo(3)))
+                .andExpect(jsonPath("$.results[1].productId", equalTo(2)));
     }
 }

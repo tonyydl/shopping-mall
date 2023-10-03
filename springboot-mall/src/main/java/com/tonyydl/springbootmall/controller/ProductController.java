@@ -37,10 +37,10 @@ public class ProductController {
             @RequestParam(defaultValue = "desc") String sort,
 
             // 分頁 Pagination
-            @RequestParam(defaultValue = "5") @Max(1_000) @Min(0) Integer limit,
-            @RequestParam(defaultValue = "0") @Min(0) Integer offset
+            @RequestParam(defaultValue = "5") @Max(1_000) @Min(0) Integer size,
+            @RequestParam(defaultValue = "0") @Min(0) Integer page
     ) {
-        ProductQueryParamsDTO productQueryParamsDTO = new ProductQueryParamsDTO(category, search, orderBy, sort, limit, offset);
+        ProductQueryParamsDTO productQueryParamsDTO = new ProductQueryParamsDTO(category, search, orderBy, sort, size, page);
 
         // 取得 product list
         List<ProductPO> productPOList = productService.getProducts(productQueryParamsDTO);
@@ -49,13 +49,13 @@ public class ProductController {
         Integer total = productService.countProduct(productQueryParamsDTO);
 
         // 分頁
-        Page<ProductPO> page = new Page<>();
-        page.setLimit(limit);
-        page.setOffset(offset);
-        page.setTotal(total);
-        page.setResults(productPOList);
+        Page<ProductPO> pagination = new Page<>();
+        pagination.setSize(size);
+        pagination.setPage(page);
+        pagination.setTotal(total);
+        pagination.setResults(productPOList);
 
-        return ResponseEntity.ok().body(page);
+        return ResponseEntity.ok().body(pagination);
     }
 
     @GetMapping("/products/{productId}")

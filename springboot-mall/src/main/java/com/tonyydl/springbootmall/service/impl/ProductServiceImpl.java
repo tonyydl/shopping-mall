@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -40,8 +39,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductPO> getProducts(ProductQueryParamsDTO productQueryParamsDTO) {
-        int page = productQueryParamsDTO.offset() / productQueryParamsDTO.limit();
-        Pageable pageable = PageRequest.of(page, productQueryParamsDTO.limit(), createSort(productQueryParamsDTO));
+        Pageable pageable = PageRequest.of(productQueryParamsDTO.page(), productQueryParamsDTO.size(), createSort(productQueryParamsDTO));
         return productRepository.findProductsByCategoryAndProductNameContaining(
                 productQueryParamsDTO.category(),
                 productQueryParamsDTO.search(),
