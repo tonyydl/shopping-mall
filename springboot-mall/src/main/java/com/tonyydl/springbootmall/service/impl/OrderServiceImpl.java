@@ -14,8 +14,6 @@ import com.tonyydl.springbootmall.repository.UserRepository;
 import com.tonyydl.springbootmall.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,8 +50,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderPO> getOrders(OrderQueryParamsDTO orderQueryParamsDTO) {
-        Pageable pageable = PageRequest.of(orderQueryParamsDTO.getPage(), orderQueryParamsDTO.getSize());
-        List<OrderPO> orderList = orderRepository.findByUserIdOrderByCreatedDateDesc(orderQueryParamsDTO.getUserId(), pageable);
+        List<OrderPO> orderList = orderRepository.findByUserIdOrderByCreatedDateDesc(orderQueryParamsDTO.getUserId(), orderQueryParamsDTO.getPageable());
 
         for (OrderPO orderPO : orderList) {
             List<OrderItemDTO> orderItemDTOList = orderItemRepository.findOrderItemsByOrderId(orderPO.getOrderId());

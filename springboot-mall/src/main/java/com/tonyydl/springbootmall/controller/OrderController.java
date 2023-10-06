@@ -6,8 +6,7 @@ import com.tonyydl.springbootmall.data.po.OrderPO;
 import com.tonyydl.springbootmall.service.OrderService;
 import com.tonyydl.springbootmall.util.Page;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +25,11 @@ public class OrderController {
     @GetMapping("/users/{userId}/orders")
     public ResponseEntity<Page<OrderPO>> getOrders(
             @PathVariable Integer userId,
-            @RequestParam(defaultValue = "10") @Max(1000) @Min(0) Integer size,
-            @RequestParam(defaultValue = "0") @Min(0) Integer page
+            Pageable pageable
     ) {
         OrderQueryParamsDTO orderQueryParamsDTO = OrderQueryParamsDTO.builder()
                 .userId(userId)
-                .size(size)
-                .page(page)
+                .pageable(pageable)
                 .build();
 
         // 取得 order list
@@ -43,8 +40,8 @@ public class OrderController {
 
         // 分頁
         Page<OrderPO> pagination = new Page<>();
-        pagination.setSize(size);
-        pagination.setPage(page);
+        pagination.setSize(pageable.getPageSize());
+        pagination.setPage(pageable.getPageNumber());
         pagination.setTotal(count);
         pagination.setResults(orderList);
 

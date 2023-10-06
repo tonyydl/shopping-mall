@@ -5,12 +5,8 @@ import com.tonyydl.springbootmall.data.dto.ProductRequestDTO;
 import com.tonyydl.springbootmall.data.po.ProductPO;
 import com.tonyydl.springbootmall.repository.ProductRepository;
 import com.tonyydl.springbootmall.service.ProductService;
-import com.tonyydl.springbootmall.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,27 +35,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductPO> getProducts(ProductQueryParamsDTO productQueryParamsDTO) {
-        Pageable pageable = PageRequest.of(productQueryParamsDTO.page(), productQueryParamsDTO.size(), createSort(productQueryParamsDTO));
         return productRepository.findProductsByCategoryAndProductNameContaining(
                 productQueryParamsDTO.category(),
                 productQueryParamsDTO.search(),
-                pageable
+                productQueryParamsDTO.pageable()
         );
-    }
-
-    private Sort createSort(ProductQueryParamsDTO productQueryParamsDTO) {
-        if (productQueryParamsDTO != null) {
-            String orderBy = productQueryParamsDTO.orderBy();
-            if (orderBy != null) {
-                String orderByCamelCase = StringUtils.makeCamelCase(orderBy);
-                String sort = productQueryParamsDTO.sort();
-                Sort.Direction sortDirection = Sort.Direction.fromOptionalString(sort.toUpperCase())
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-                return Sort.by(sortDirection, orderByCamelCase);
-            }
-        }
-
-        return null;
     }
 
     @Override

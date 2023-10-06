@@ -7,8 +7,7 @@ import com.tonyydl.springbootmall.data.po.ProductPO;
 import com.tonyydl.springbootmall.service.ProductService;
 import com.tonyydl.springbootmall.util.Page;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -31,16 +30,10 @@ public class ProductController {
             // 查詢條件 Filtering
             @RequestParam(required = false) ProductCategory category,
             @RequestParam(required = false) String search,
-
-            // 排序 Sorting
-            @RequestParam(defaultValue = "created_date") String orderBy,
-            @RequestParam(defaultValue = "desc") String sort,
-
             // 分頁 Pagination
-            @RequestParam(defaultValue = "5") @Max(1_000) @Min(0) Integer size,
-            @RequestParam(defaultValue = "0") @Min(0) Integer page
+            Pageable pageable
     ) {
-        ProductQueryParamsDTO productQueryParamsDTO = new ProductQueryParamsDTO(category, search, orderBy, sort, size, page);
+        ProductQueryParamsDTO productQueryParamsDTO = new ProductQueryParamsDTO(category, search, pageable);
 
         // 取得 product list
         List<ProductPO> productPOList = productService.getProducts(productQueryParamsDTO);
@@ -50,8 +43,8 @@ public class ProductController {
 
         // 分頁
         Page<ProductPO> pagination = new Page<>();
-        pagination.setSize(size);
-        pagination.setPage(page);
+        pagination.setSize(pageable.getPageSize());
+        pagination.setPage(pageable.getPageNumber());
         pagination.setTotal(total);
         pagination.setResults(productPOList);
 

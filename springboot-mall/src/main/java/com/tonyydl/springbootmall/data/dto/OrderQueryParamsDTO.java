@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 @Builder(toBuilder = true)
 @Data
@@ -11,6 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderQueryParamsDTO {
     private Integer userId;
-    private Integer size;
-    private Integer page;
+    private Pageable pageable;
 }
