@@ -6,6 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tonyydl.shoppingmallapp.R
+import com.tonyydl.shoppingmallapp.data.dto.UserLoginRequestDTO
+import com.tonyydl.shoppingmallapp.repository.UserRepository
+import com.tonyydl.shoppingmallapp.service.RetrofitManager
 import com.tonyydl.shoppingmallapp.utils.StringValue
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,6 +18,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class LoginViewModel : ViewModel() {
 
@@ -23,6 +27,8 @@ class LoginViewModel : ViewModel() {
 
     private val _toastMessage = MutableSharedFlow<StringValue>()
     val toastMessage = _toastMessage.asSharedFlow()
+
+    private val userRepository by lazy { UserRepository(RetrofitManager.userService) }
 
     var account by mutableStateOf("")
         private set
@@ -45,8 +51,13 @@ class LoginViewModel : ViewModel() {
         }
         viewModelScope.launch {
             updateLoadingState(true)
-            delay(1_000) // TODO: request API and wait for response
-            updateResultState(StringValue.StringResource(R.string.login_invalid)) // TODO: temporary show fail result for user
+            try {
+                val userDTO = userRepository.login(UserLoginRequestDTO(account, password))
+                updateResultState(StringValue.StringResource(R.string.login_successful))
+                // TODO: navigate to next page
+            } catch (e: Exception) {
+                updateResultState(StringValue.StringResource(R.string.login_invalid))
+            }
             updateLoadingState(false)
         }
     }

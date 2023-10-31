@@ -81,7 +81,7 @@ fun LoginScreen(
         }
         if (!uiState.isLoading && resultMessage.isNotBlank()) {
             Text(
-                text = stringResource(R.string.login_invalid),
+                text = resultMessage,
                 style = typography.bodyLarge
             )
         }
