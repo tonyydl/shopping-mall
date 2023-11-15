@@ -1,4 +1,4 @@
-package com.tonyydl.shoppingmallapp.ui
+package com.tonyydl.shoppingmallapp.ui.login
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,7 +10,6 @@ import com.tonyydl.shoppingmallapp.data.dto.UserLoginRequestDTO
 import com.tonyydl.shoppingmallapp.repository.UserRepository
 import com.tonyydl.shoppingmallapp.service.RetrofitManager
 import com.tonyydl.shoppingmallapp.utils.StringValue
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.tonyydl.shoppingmallapp.ui
+package com.tonyydl.shoppingmallapp.ui.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
