@@ -12,6 +12,7 @@ import com.tonyydl.shoppingmallapp.service.RetrofitManager
 import com.tonyydl.shoppingmallapp.utils.StringValue
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,8 +31,8 @@ class LoginViewModel : ViewModel() {
             _uiState.update { newState }
         }
 
-    private val _toastMessage = MutableSharedFlow<StringValue>()
-    val toastMessage = _toastMessage.asSharedFlow()
+    private val _event: MutableSharedFlow<LoginEvent> = MutableSharedFlow()
+    val event: SharedFlow<LoginEvent> = _event.asSharedFlow()
 
     private val userRepository by lazy { UserRepository(RetrofitManager.userService) }
 
@@ -51,7 +52,7 @@ class LoginViewModel : ViewModel() {
 
     fun performLogin() {
         if (account.isBlank() || password.isBlank()) {
-            showToast(StringValue.StringResource(R.string.login_blank_invalid))
+            sendEvent(LoginEvent.LoginInvalid)
             return
         }
         viewModelScope.launch {
@@ -67,9 +68,9 @@ class LoginViewModel : ViewModel() {
         }
     }
 
-    private fun showToast(stringValue: StringValue) {
+    private fun sendEvent(event: LoginEvent) {
         viewModelScope.launch {
-            _toastMessage.emit(stringValue)
+            _event.emit(event)
         }
     }
 }

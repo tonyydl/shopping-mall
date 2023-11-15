@@ -57,7 +57,13 @@ fun LoginScreen(
     val resultMessage = uiState.resultMessage.asString(context)
 
     LaunchedEffect(Unit) {
-        loginViewModel.toastMessage.collect { showToast(it) }
+        loginViewModel.event.collect { event ->
+            when (event) {
+                LoginEvent.LoginInvalid -> {
+                    showToast(StringValue.StringResource(R.string.login_blank_invalid))
+                }
+            }
+        }
     }
 
     Column(
