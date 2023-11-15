@@ -1,4 +1,4 @@
-package com.tonyydl.shoppingmallapp.ui
+package com.tonyydl.shoppingmallapp.ui.login
 
 import com.tonyydl.shoppingmallapp.utils.StringValue
 

@@ -7,25 +7,44 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.tonyydl.shoppingmallapp.ui.LoginScreen
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.tonyydl.shoppingmallapp.ui.login.LoginScreen
 import com.tonyydl.shoppingmallapp.ui.theme.ShoppingMallTheme
-import com.tonyydl.shoppingmallapp.utils.StringValue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ShoppingMallTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+            MainApp()
+        }
+    }
+
+    @Composable
+    private fun MainApp() {
+        ShoppingMallTheme {
+            val navController = rememberNavController()
+            val context = LocalContext.current
+
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                NavHost(
+                    navController = navController,
+                    startDestination = Login.route
                 ) {
-                    LoginScreen(showToast = { showToastMessage(it.asString(this)) })
+                    composable(route = Login.route) {
+                        LoginScreen(
+                            showToast = {
+                                showToastMessage(it.asString(context))
+                            }
+                        )
+                    }
                 }
             }
         }
