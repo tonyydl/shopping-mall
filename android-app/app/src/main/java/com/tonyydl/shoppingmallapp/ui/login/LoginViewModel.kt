@@ -3,36 +3,18 @@ package com.tonyydl.shoppingmallapp.ui.login
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tonyydl.shoppingmallapp.BaseViewModel
 import com.tonyydl.shoppingmallapp.R
 import com.tonyydl.shoppingmallapp.data.dto.UserLoginRequestDTO
 import com.tonyydl.shoppingmallapp.repository.UserRepository
 import com.tonyydl.shoppingmallapp.service.RetrofitManager
 import com.tonyydl.shoppingmallapp.utils.StringValue
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class LoginViewModel : ViewModel() {
-
-    private val _uiState = MutableStateFlow(LoginUiState())
-    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
-
-    private var state: LoginUiState
-        get() = _uiState.value
-        set(newState) {
-            _uiState.update { newState }
-        }
-
-    private val _event: MutableSharedFlow<LoginEvent> = MutableSharedFlow()
-    val event: SharedFlow<LoginEvent> = _event.asSharedFlow()
+class LoginViewModel : BaseViewModel<LoginUiState, LoginUiEvent>() {
+    override fun setInitialState(): LoginUiState = LoginUiState()
 
     private val userRepository by lazy { UserRepository(RetrofitManager.userService) }
 
@@ -52,7 +34,7 @@ class LoginViewModel : ViewModel() {
 
     fun performLogin() {
         if (account.isBlank() || password.isBlank()) {
-            sendEvent(LoginEvent.LoginInvalid)
+            sendUiEvent(LoginUiEvent.LoginInvalid)
             return
         }
         viewModelScope.launch {
@@ -65,12 +47,6 @@ class LoginViewModel : ViewModel() {
                 state = state.copy(resultMessage = StringValue.StringResource(R.string.login_invalid))
             }
             state = state.copy(isLoading = false)
-        }
-    }
-
-    private fun sendEvent(event: LoginEvent) {
-        viewModelScope.launch {
-            _event.emit(event)
         }
     }
 }

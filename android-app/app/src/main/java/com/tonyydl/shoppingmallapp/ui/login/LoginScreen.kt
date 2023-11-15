@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -57,9 +56,9 @@ fun LoginScreen(
     val resultMessage = uiState.resultMessage.asString(context)
 
     LaunchedEffect(Unit) {
-        loginViewModel.event.collect { event ->
+        loginViewModel.uiEvent.collect { event ->
             when (event) {
-                LoginEvent.LoginInvalid -> {
+                LoginUiEvent.LoginInvalid -> {
                     showToast(StringValue.StringResource(R.string.login_blank_invalid))
                 }
             }
