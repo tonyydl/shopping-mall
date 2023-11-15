@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tonyydl.shoppingmallapp.R
 import com.tonyydl.shoppingmallapp.ui.theme.ShoppingMallTheme
@@ -51,7 +52,7 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val uiState by loginViewModel.uiState.collectAsState()
+    val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
     val resultMessage = uiState.resultMessage.asString(context)
 
