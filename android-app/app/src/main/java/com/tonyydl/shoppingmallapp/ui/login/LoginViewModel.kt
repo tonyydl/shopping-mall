@@ -24,6 +24,12 @@ class LoginViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
+    private var state: LoginUiState
+        get() = _uiState.value
+        set(newState) {
+            _uiState.update { newState }
+        }
+
     private val _toastMessage = MutableSharedFlow<StringValue>()
     val toastMessage = _toastMessage.asSharedFlow()
 
@@ -49,33 +55,21 @@ class LoginViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
-            updateLoadingState(true)
+            state = state.copy(isLoading = true)
             try {
                 val userDTO = userRepository.login(UserLoginRequestDTO(account, password))
-                updateResultState(StringValue.StringResource(R.string.login_successful))
+                state = state.copy(resultMessage = StringValue.StringResource(R.string.login_successful))
                 // TODO: navigate to next page
             } catch (e: Exception) {
-                updateResultState(StringValue.StringResource(R.string.login_invalid))
+                state = state.copy(resultMessage = StringValue.StringResource(R.string.login_invalid))
             }
-            updateLoadingState(false)
+            state = state.copy(isLoading = false)
         }
     }
 
     private fun showToast(stringValue: StringValue) {
         viewModelScope.launch {
             _toastMessage.emit(stringValue)
-        }
-    }
-
-    private fun updateLoadingState(isLoading: Boolean) {
-        _uiState.update { currentState ->
-            currentState.copy(isLoading = isLoading)
-        }
-    }
-
-    private fun updateResultState(stringValue: StringValue) {
-        _uiState.update { currentState ->
-            currentState.copy(resultMessage = stringValue)
         }
     }
 }
