@@ -41,7 +41,10 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable(route = Login.route) {
                         LoginScreen(
-                            showToast = {
+                            onLoginSuccess = {
+                                navController.navigate(Product.route)
+                            },
+                            onLoginFailed = {
                                 showToastMessage(it.asString(context))
                             }
                         )

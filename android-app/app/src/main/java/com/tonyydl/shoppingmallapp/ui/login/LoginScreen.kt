@@ -47,8 +47,9 @@ import com.tonyydl.shoppingmallapp.utils.StringValue
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    showToast: (StringValue) -> Unit = { _ -> },
-    loginViewModel: LoginViewModel = viewModel()
+    loginViewModel: LoginViewModel = viewModel(),
+    onLoginSuccess: () -> Unit = { },
+    onLoginFailed: (StringValue) -> Unit = { _ -> },
 ) {
     val context = LocalContext.current
     val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
@@ -58,8 +59,11 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         loginViewModel.uiEvent.collect { event ->
             when (event) {
+                LoginUiEvent.NavigateToProductPage -> {
+                    onLoginSuccess()
+                }
                 LoginUiEvent.LoginInvalid -> {
-                    showToast(StringValue.StringResource(R.string.login_blank_invalid))
+                    onLoginFailed(StringValue.StringResource(R.string.login_blank_invalid))
                 }
             }
         }
