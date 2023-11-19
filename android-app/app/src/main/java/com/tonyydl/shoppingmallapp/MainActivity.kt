@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.tonyydl.shoppingmallapp.ui.login.LoginScreen
+import com.tonyydl.shoppingmallapp.ui.product.ProductScreen
 import com.tonyydl.shoppingmallapp.ui.theme.ShoppingMallTheme
 
 class MainActivity : ComponentActivity() {
@@ -44,6 +45,9 @@ class MainActivity : ComponentActivity() {
                                 showToastMessage(it.asString(context))
                             }
                         )
+                    }
+                    composable(route = Product.route) {
+                        ProductScreen()
                     }
                 }
             }

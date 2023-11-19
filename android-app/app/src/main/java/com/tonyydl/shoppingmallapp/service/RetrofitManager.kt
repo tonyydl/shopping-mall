@@ -29,4 +29,5 @@ object RetrofitManager {
         .build()
 
     val userService: UserService = retrofit.create(UserService::class.java)
+    val productService: ProductService = retrofit.create(ProductService::class.java)
 }
