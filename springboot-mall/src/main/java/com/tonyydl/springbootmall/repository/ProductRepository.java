@@ -14,6 +14,10 @@ public interface ProductRepository extends JpaRepository<ProductPO, Integer> {
 
     Integer countByCategoryAndProductNameContainingIgnoreCase(ProductCategory category, String search);
 
+    Integer countByCategory(ProductCategory category);
+
+    Integer countByProductNameContainingIgnoreCase(String search);
+
     @Query("SELECT p FROM ProductPO p " +
             "WHERE (:category IS NULL OR p.category = :category) " +
             "AND (:search IS NULL OR p.productName LIKE CONCAT('%', :search, '%'))")

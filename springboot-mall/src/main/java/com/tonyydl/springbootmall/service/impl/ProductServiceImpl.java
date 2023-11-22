@@ -27,10 +27,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Integer countProduct(ProductQueryParamsDTO productQueryParamsDTO) {
-        return productRepository.countByCategoryAndProductNameContainingIgnoreCase(
-                productQueryParamsDTO.category(),
-                productQueryParamsDTO.search()
-        );
+        if (productQueryParamsDTO.category() != null && productQueryParamsDTO.search() != null) {
+            return productRepository.countByCategoryAndProductNameContainingIgnoreCase(
+                    productQueryParamsDTO.category(),
+                    productQueryParamsDTO.search()
+            );
+        } else if (productQueryParamsDTO.category() != null) {
+            return productRepository.countByCategory(productQueryParamsDTO.category());
+        } else if (productQueryParamsDTO.search() != null) {
+            return productRepository.countByProductNameContainingIgnoreCase(productQueryParamsDTO.search());
+        } else {
+            return (int) productRepository.count();
+        }
     }
 
     @Override
