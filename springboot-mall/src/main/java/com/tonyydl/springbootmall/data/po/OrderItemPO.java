@@ -1,10 +1,7 @@
 package com.tonyydl.springbootmall.data.po;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder(toBuilder = true)
 @Data
@@ -17,10 +14,10 @@ public class OrderItemPO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_item_id")
     private Integer orderItemId;
-    @Column(name = "order_id")
-    private Integer orderId;
-    @Column(name = "product_id")
-    private Integer productId;
     private Integer quantity;
     private Integer amount;
+
+    @OneToOne
+    @JoinColumn(name = "product_id")
+    private ProductPO product;
 }

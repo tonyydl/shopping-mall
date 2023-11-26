@@ -2,12 +2,9 @@ package com.tonyydl.springbootmall.service.impl;
 
 import com.tonyydl.springbootmall.data.dto.BuyItemDTO;
 import com.tonyydl.springbootmall.data.dto.CreateOrderRequestDTO;
-import com.tonyydl.springbootmall.data.dto.OrderItemDTO;
 import com.tonyydl.springbootmall.data.dto.OrderQueryParamsDTO;
 import com.tonyydl.springbootmall.data.po.OrderPO;
-import com.tonyydl.springbootmall.data.po.OrderItemPO;
 import com.tonyydl.springbootmall.data.po.ProductPO;
-import com.tonyydl.springbootmall.repository.OrderItemRepository;
 import com.tonyydl.springbootmall.repository.OrderRepository;
 import com.tonyydl.springbootmall.repository.ProductRepository;
 import com.tonyydl.springbootmall.repository.UserRepository;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,16 +25,13 @@ public class OrderServiceImpl implements OrderService {
     private final static Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
     public OrderServiceImpl(UserRepository userRepository,
                             ProductRepository productRepository,
-                            OrderRepository orderRepository,
-                            OrderItemRepository orderItemRepository) {
+                            OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
     }
@@ -50,28 +43,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderPO> getOrders(OrderQueryParamsDTO orderQueryParamsDTO) {
-        List<OrderPO> orderList = orderRepository.findByUserIdOrderByCreatedDateDesc(orderQueryParamsDTO.getUserId(), orderQueryParamsDTO.getPageable());
-
-        for (OrderPO orderPO : orderList) {
-            List<OrderItemDTO> orderItemDTOList = orderItemRepository.findOrderItemsByOrderId(orderPO.getOrderId());
-
-            orderPO.setOrderItemDTOList(orderItemDTOList);
-        }
-        return orderList;
+        return orderRepository.findByUserIdOrderByCreatedDateDesc(orderQueryParamsDTO.getUserId(), orderQueryParamsDTO.getPageable());
     }
 
     @Override
     public OrderPO getOrderById(Integer orderId) {
-        OrderPO orderPO = orderRepository.findById(orderId).orElseThrow(() -> {
+        return orderRepository.findById(orderId).orElseThrow(() -> {
             log.warn("該 orderId {} 不存在", orderId);
             return new ResponseStatusException(HttpStatus.BAD_REQUEST);
         });
-
-        List<OrderItemDTO> orderItemDTOList = orderItemRepository.findOrderItemsByOrderId(orderId);
-
-        orderPO.setOrderItemDTOList(orderItemDTOList);
-
-        return orderPO;
     }
 
     @Transactional
@@ -84,7 +64,6 @@ public class OrderServiceImpl implements OrderService {
         });
 
         int totalAmount = 0;
-        List<OrderItemPO> orderItemPOList = new ArrayList<>();
 
         for (BuyItemDTO buyItemDTO : createOrderRequestDTO.getBuyItemDTOList()) {
             // 檢查 product 是否存在
@@ -108,14 +87,6 @@ public class OrderServiceImpl implements OrderService {
             // 計算總價錢
             int amount = buyItemDTO.getQuantity() * productPO.getPrice();
             totalAmount += amount;
-
-            // 轉換 BuyItem to OrderItem
-            OrderItemPO orderItemPO = new OrderItemPO();
-            orderItemPO.setProductId(buyItemDTO.getProductId());
-            orderItemPO.setQuantity(buyItemDTO.getQuantity());
-            orderItemPO.setAmount(amount);
-
-            orderItemPOList.add(orderItemPO);
         }
 
         Date now = new Date();
@@ -126,10 +97,6 @@ public class OrderServiceImpl implements OrderService {
                 .lastModifiedDate(now)
                 .build();
         OrderPO savedOrderPO = orderRepository.save(orderPO);
-
-        orderItemPOList.forEach(orderItem -> orderItem.setOrderId(savedOrderPO.getOrderId()));
-
-        orderItemRepository.saveAll(orderItemPOList);
 
         return savedOrderPO.getOrderId();
     }

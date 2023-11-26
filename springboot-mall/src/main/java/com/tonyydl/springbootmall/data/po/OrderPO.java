@@ -3,13 +3,8 @@ package com.tonyydl.springbootmall.data.po;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.tonyydl.springbootmall.data.dto.OrderItemDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder(toBuilder = true)
 @Data
@@ -31,7 +26,7 @@ public class OrderPO {
     @Column(name = "last_modified_date")
     private Date lastModifiedDate;
 
-    @Transient
-    @JsonProperty("orderItemList")
-    private List<OrderItemDTO> orderItemDTOList;
+    @OneToMany
+    @JoinColumn(name = "order_id", nullable = false)
+    private List<OrderItemPO> orderItems;
 }
