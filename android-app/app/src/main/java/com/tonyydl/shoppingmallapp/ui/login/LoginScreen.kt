@@ -62,6 +62,7 @@ fun LoginScreen(
                 LoginUiEvent.NavigateToProductPage -> {
                     onLoginSuccess()
                 }
+
                 LoginUiEvent.LoginInvalid -> {
                     onLoginFailed(StringValue.StringResource(R.string.login_blank_invalid))
                 }

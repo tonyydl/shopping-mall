@@ -41,10 +41,12 @@ class LoginViewModel : BaseViewModel<LoginUiState, LoginUiEvent>() {
             state = state.copy(isLoading = true)
             try {
                 val userDTO = userRepository.login(UserLoginRequestDTO(account, password))
-                state = state.copy(resultMessage = StringValue.StringResource(R.string.login_successful))
+                state =
+                    state.copy(resultMessage = StringValue.StringResource(R.string.login_successful))
                 sendUiEvent(LoginUiEvent.NavigateToProductPage)
             } catch (e: Exception) {
-                state = state.copy(resultMessage = StringValue.StringResource(R.string.login_invalid))
+                state =
+                    state.copy(resultMessage = StringValue.StringResource(R.string.login_invalid))
             }
             state = state.copy(isLoading = false)
         }
