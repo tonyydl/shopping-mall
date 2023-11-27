@@ -40,7 +40,7 @@ class LoginViewModel : BaseViewModel<LoginUiState, LoginUiEvent>() {
         viewModelScope.launch {
             state = state.copy(isLoading = true)
             try {
-                val userDTO = userRepository.login(UserLoginRequestDTO(account, password))
+                userRepository.login(UserLoginRequestDTO(account, password))
                 state =
                     state.copy(resultMessage = StringValue.StringResource(R.string.login_successful))
                 sendUiEvent(LoginUiEvent.NavigateToProductPage)
