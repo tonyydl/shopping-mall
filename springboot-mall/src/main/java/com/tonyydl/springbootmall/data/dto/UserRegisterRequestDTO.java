@@ -3,7 +3,6 @@ package com.tonyydl.springbootmall.data.dto;
 import com.tonyydl.springbootmall.data.po.UserPO;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

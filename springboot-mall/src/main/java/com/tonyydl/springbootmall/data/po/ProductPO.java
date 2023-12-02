@@ -1,14 +1,13 @@
 package com.tonyydl.springbootmall.data.po;
 
 import com.tonyydl.springbootmall.constant.ProductCategory;
-
-import java.util.Date;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @Builder(toBuilder = true)
 @Data
