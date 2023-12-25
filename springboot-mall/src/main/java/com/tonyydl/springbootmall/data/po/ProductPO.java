@@ -1,6 +1,7 @@
 package com.tonyydl.springbootmall.data.po;
 
 import com.tonyydl.springbootmall.constant.ProductCategory;
+import com.tonyydl.springbootmall.data.dto.ProductDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,4 +34,19 @@ public class ProductPO {
     private Date createdDate;
     @Column(name = "last_modified_date")
     private Date lastModifiedDate;
+
+    public ProductDTO toDTO() {
+        return ProductDTO
+                .builder()
+                .productId(productId)
+                .productName(productName)
+                .category(category)
+                .imageUrl(imageUrl)
+                .price(price)
+                .stock(stock)
+                .description(description)
+                .createdDate(createdDate.getTime())
+                .lastModifiedDate(lastModifiedDate.getTime())
+                .build();
+    }
 }

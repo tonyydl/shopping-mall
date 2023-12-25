@@ -1,8 +1,8 @@
 package com.tonyydl.springbootmall.data.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.tonyydl.springbootmall.constant.ProductCategory;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,24 +12,39 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductRequestDTO {
+@JsonPropertyOrder({
+        "product_id",
+        "product_name",
+        "category",
+        "image_url",
+        "price",
+        "stock",
+        "description",
+        "created_date",
+        "last_modified_date"
+})
+public class ProductDTO {
 
-    @NotNull
+    @JsonProperty("product_id")
+    private Integer productId;
+
     @JsonProperty("product_name")
     private String productName;
 
-    @NotNull
     private ProductCategory category;
 
-    @NotNull
     @JsonProperty("image_url")
     private String imageUrl;
 
-    @NotNull
     private Integer price;
 
-    @NotNull
     private Integer stock;
 
     private String description;
+
+    @JsonProperty("created_date")
+    private long createdDate;
+
+    @JsonProperty("last_modified_date")
+    private long lastModifiedDate;
 }
