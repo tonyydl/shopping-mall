@@ -1,8 +1,8 @@
 package com.tonyydl.springbootmall.controller;
 
+import com.tonyydl.springbootmall.data.dto.UserDTO;
 import com.tonyydl.springbootmall.data.dto.UserLoginRequestDTO;
 import com.tonyydl.springbootmall.data.dto.UserRegisterRequestDTO;
-import com.tonyydl.springbootmall.data.po.UserPO;
 import com.tonyydl.springbootmall.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,18 +21,18 @@ public class UserController {
     }
 
     @PostMapping("/users/register")
-    public ResponseEntity<UserPO> register(@RequestBody @Valid UserRegisterRequestDTO userRegisterRequestDTO) {
+    public ResponseEntity<UserDTO> register(@RequestBody @Valid UserRegisterRequestDTO userRegisterRequestDTO) {
         Integer userId = userService.register(userRegisterRequestDTO);
 
-        UserPO userPO = userService.getUserById(userId);
+        UserDTO userDTO = userService.getUserById(userId).toDTO();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(userPO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<UserPO> login(@RequestBody @Valid UserLoginRequestDTO userLoginRequestDTO) {
-        UserPO userPO = userService.login(userLoginRequestDTO);
+    public ResponseEntity<UserDTO> login(@RequestBody @Valid UserLoginRequestDTO userLoginRequestDTO) {
+        UserDTO userDTO = userService.login(userLoginRequestDTO).toDTO();
 
-        return ResponseEntity.ok().body(userPO);
+        return ResponseEntity.ok().body(userDTO);
     }
 }
