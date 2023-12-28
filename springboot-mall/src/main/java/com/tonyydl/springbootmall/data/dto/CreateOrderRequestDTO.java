@@ -16,6 +16,6 @@ import java.util.List;
 public class CreateOrderRequestDTO {
 
     @NotEmpty
-    @JsonProperty("buyItemList")
+    @JsonProperty("buy_items")
     private List<BuyItemDTO> buyItemDTOList;
 }
