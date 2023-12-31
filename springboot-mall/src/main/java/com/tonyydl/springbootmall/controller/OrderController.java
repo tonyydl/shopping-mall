@@ -1,6 +1,7 @@
 package com.tonyydl.springbootmall.controller;
 
 import com.tonyydl.springbootmall.data.dto.CreateOrderRequestDTO;
+import com.tonyydl.springbootmall.data.dto.OrderDTO;
 import com.tonyydl.springbootmall.data.dto.OrderQueryParamsDTO;
 import com.tonyydl.springbootmall.data.po.OrderPO;
 import com.tonyydl.springbootmall.service.OrderService;
@@ -23,7 +24,7 @@ public class OrderController {
     }
 
     @GetMapping("/users/{userId}/orders")
-    public ResponseEntity<Page<OrderPO>> getOrders(
+    public ResponseEntity<Page<OrderDTO>> getOrders(
             @PathVariable Integer userId,
             Pageable pageable
     ) {
@@ -32,14 +33,17 @@ public class OrderController {
                 .pageable(pageable)
                 .build();
 
-        // 取得 order list
-        List<OrderPO> orderList = orderService.getOrders(orderQueryParamsDTO);
+        // 取得 order list 並轉成 DTO
+        List<OrderDTO> orderList = orderService.getOrders(orderQueryParamsDTO)
+                .stream()
+                .map(OrderPO::toDTO)
+                .toList();
 
         // 取得 order 總數
         Integer count = orderService.countOrder(orderQueryParamsDTO);
 
         // 分頁
-        Page<OrderPO> pagination = new Page<>();
+        Page<OrderDTO> pagination = new Page<>();
         pagination.setSize(pageable.getPageSize());
         pagination.setPage(pageable.getPageNumber());
         pagination.setTotal(count);
@@ -49,13 +53,15 @@ public class OrderController {
     }
 
     @PostMapping("/users/{userId}/orders")
-    public ResponseEntity<?> createOrder(@PathVariable Integer userId,
-                                         @RequestBody @Valid CreateOrderRequestDTO createOrderRequestDTO) {
+    public ResponseEntity<OrderDTO> createOrder(
+            @PathVariable Integer userId,
+            @RequestBody @Valid CreateOrderRequestDTO createOrderRequestDTO
+    ) {
 
         Integer orderId = orderService.createOrder(userId, createOrderRequestDTO);
 
-        OrderPO orderPO = orderService.getOrderById(orderId);
+        OrderDTO orderDTO = orderService.getOrderById(orderId).toDTO();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(orderPO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderDTO);
     }
 }

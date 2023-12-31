@@ -1,5 +1,7 @@
 package com.tonyydl.springbootmall.data.po;
 
+import com.tonyydl.springbootmall.data.dto.OrderDTO;
+import com.tonyydl.springbootmall.data.dto.OrderItemDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,7 +31,23 @@ public class OrderPO {
     @Column(name = "last_modified_date")
     private Date lastModifiedDate;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id", nullable = false)
     private List<OrderItemPO> orderItems;
+
+    public OrderDTO toDTO() {
+        List<OrderItemDTO> orderItemDTOList = orderItems
+                .stream()
+                .map(OrderItemPO::toDTO)
+                .toList();
+        return OrderDTO
+                .builder()
+                .orderId(orderId)
+                .userId(userId)
+                .totalAmount(totalAmount)
+                .orderItems(orderItemDTOList)
+                .createdDate(createdDate)
+                .lastModifiedDate(lastModifiedDate)
+                .build();
+    }
 }

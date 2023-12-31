@@ -3,6 +3,7 @@ package com.tonyydl.springbootmall.service.impl;
 import com.tonyydl.springbootmall.data.dto.BuyItemDTO;
 import com.tonyydl.springbootmall.data.dto.CreateOrderRequestDTO;
 import com.tonyydl.springbootmall.data.dto.OrderQueryParamsDTO;
+import com.tonyydl.springbootmall.data.po.OrderItemPO;
 import com.tonyydl.springbootmall.data.po.OrderPO;
 import com.tonyydl.springbootmall.data.po.ProductPO;
 import com.tonyydl.springbootmall.repository.OrderRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -64,6 +66,7 @@ public class OrderServiceImpl implements OrderService {
         });
 
         int totalAmount = 0;
+        List<OrderItemPO> orderItemPOList = new ArrayList<>();
 
         for (BuyItemDTO buyItemDTO : createOrderRequestDTO.getBuyItemDTOList()) {
             // 檢查 product 是否存在
@@ -87,6 +90,16 @@ public class OrderServiceImpl implements OrderService {
             // 計算總價錢
             int amount = buyItemDTO.getQuantity() * productPO.getPrice();
             totalAmount += amount;
+
+            // 轉換 BuyItem to OrderItem
+            OrderItemPO orderItemPO = OrderItemPO
+                    .builder()
+                    .product(productPO)
+                    .quantity(buyItemDTO.getQuantity())
+                    .amount(amount)
+                    .build();
+
+            orderItemPOList.add(orderItemPO);
         }
 
         Date now = new Date();
@@ -95,6 +108,7 @@ public class OrderServiceImpl implements OrderService {
                 .totalAmount(totalAmount)
                 .createdDate(now)
                 .lastModifiedDate(now)
+                .orderItems(orderItemPOList)
                 .build();
         OrderPO savedOrderPO = orderRepository.save(orderPO);
 

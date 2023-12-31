@@ -1,5 +1,6 @@
 package com.tonyydl.springbootmall.data.po;
 
+import com.tonyydl.springbootmall.data.dto.OrderItemDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +24,14 @@ public class OrderItemPO {
     @OneToOne
     @JoinColumn(name = "product_id")
     private ProductPO product;
+
+    public OrderItemDTO toDTO() {
+        return OrderItemDTO
+                .builder()
+                .orderItemId(orderItemId)
+                .quantity(quantity)
+                .amount(amount)
+                .product(product.toDTO())
+                .build();
+    }
 }
