@@ -12,12 +12,16 @@ class ProductViewModel : BaseViewModel<ProductUiState, ProductUiEvent>() {
 
     private val productRepository by lazy { ProductRepository(RetrofitManager.productService) }
 
-    fun getProducts() {
+    init {
+        getProducts()
+    }
+
+    private fun getProducts() {
         viewModelScope.launch {
             state = state.copy(isLoading = true)
             try {
                 val result = productRepository.getProducts()
-                // TODO: update UI List
+                state = state.copy(productList = result.results)
             } catch (e: Exception) {
                 // TODO: handle exception
             }
