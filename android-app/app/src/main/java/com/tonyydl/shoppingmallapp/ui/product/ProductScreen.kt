@@ -3,10 +3,7 @@ package com.tonyydl.shoppingmallapp.ui.product
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,10 +24,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.tonyydl.shoppingmallapp.R
-import com.tonyydl.shoppingmallapp.data.dto.ProductCategory
-import com.tonyydl.shoppingmallapp.data.dto.ProductDTO
+import com.tonyydl.shoppingmallapp.data.ProductCategory
+import com.tonyydl.shoppingmallapp.data.vo.Product
 import com.tonyydl.shoppingmallapp.ui.theme.ShoppingMallTheme
-import java.util.Date
 
 @Composable
 fun ProductScreen(
@@ -44,8 +40,8 @@ fun ProductScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.padding(mediumPadding)
     ) {
-        items(productList) { productDto ->
-            ProductItem(productDto)
+        items(productList) { product ->
+            ProductItem(product)
         }
     }
 }
@@ -53,7 +49,7 @@ fun ProductScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProductItem(
-    productDto: ProductDTO,
+    product: Product,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
@@ -65,7 +61,7 @@ private fun ProductItem(
     ) {
         Row(modifier = modifier.fillMaxWidth()) {
             AsyncImage(
-                model = productDto.imageUrl,
+                model = product.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .width(100.dp)
@@ -76,11 +72,11 @@ private fun ProductItem(
                     .align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = productDto.productName.orEmpty(),
+                    text = product.productName,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = productDto.description.orEmpty(),
+                    text = product.description,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -100,7 +96,7 @@ private fun ProductScreenPreview() {
 @Composable
 private fun ProductItemPreview() {
     ProductItem(
-        productDto = ProductDTO(
+        product = Product(
             productId = 1,
             productName = "車子1",
             category = ProductCategory.CAR,

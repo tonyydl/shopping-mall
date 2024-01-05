@@ -1,6 +1,6 @@
 package com.tonyydl.shoppingmallapp.repository
 
-import com.tonyydl.shoppingmallapp.data.dto.ProductCategory
+import com.tonyydl.shoppingmallapp.data.ProductCategory
 import com.tonyydl.shoppingmallapp.service.ProductService
 
 class ProductRepository(private val productService: ProductService) {

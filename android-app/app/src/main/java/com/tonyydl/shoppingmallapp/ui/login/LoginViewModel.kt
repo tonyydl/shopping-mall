@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.tonyydl.shoppingmallapp.BaseViewModel
 import com.tonyydl.shoppingmallapp.R
-import com.tonyydl.shoppingmallapp.data.dto.UserLoginRequestDTO
 import com.tonyydl.shoppingmallapp.repository.UserRepository
 import com.tonyydl.shoppingmallapp.service.RetrofitManager
 import com.tonyydl.shoppingmallapp.utils.StringValue
@@ -40,7 +39,7 @@ class LoginViewModel : BaseViewModel<LoginUiState, LoginUiEvent>() {
         viewModelScope.launch {
             state = state.copy(isLoading = true)
             try {
-                userRepository.login(UserLoginRequestDTO(account, password))
+                userRepository.login(account, password)
                 state =
                     state.copy(resultMessage = StringValue.StringResource(R.string.login_successful))
                 sendUiEvent(LoginUiEvent.NavigateToProductPage)

@@ -1,8 +1,8 @@
 package com.tonyydl.shoppingmallapp.ui.product
 
-import com.tonyydl.shoppingmallapp.data.dto.ProductDTO
+import com.tonyydl.shoppingmallapp.data.vo.Product
 
 data class ProductUiState(
     val isLoading: Boolean = false,
-    val productList: List<ProductDTO> = emptyList()
+    val productList: List<Product> = emptyList()
 )
