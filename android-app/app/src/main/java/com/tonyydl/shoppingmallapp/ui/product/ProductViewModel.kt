@@ -20,8 +20,10 @@ class ProductViewModel : BaseViewModel<ProductUiState, ProductUiEvent>() {
         viewModelScope.launch {
             state = state.copy(isLoading = true)
             try {
-                val result = productRepository.getProducts()
-                state = state.copy(productList = result.results)
+                val page = productRepository.getProducts()
+                state = state.copy(
+                    productList = page.results.map { it.transform() }
+                )
             } catch (e: Exception) {
                 // TODO: handle exception
             }

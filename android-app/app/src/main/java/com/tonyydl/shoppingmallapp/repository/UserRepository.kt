@@ -5,6 +5,8 @@ import com.tonyydl.shoppingmallapp.data.dto.UserLoginRequestDTO
 import com.tonyydl.shoppingmallapp.service.UserService
 
 class UserRepository(private val userService: UserService) {
-    suspend fun login(userLoginRequestDTO: UserLoginRequestDTO): UserDTO =
-        userService.login(userLoginRequestDTO)
+    suspend fun login(
+        email: String,
+        password: String
+    ): UserDTO = userService.login(UserLoginRequestDTO(email, password))
 }
