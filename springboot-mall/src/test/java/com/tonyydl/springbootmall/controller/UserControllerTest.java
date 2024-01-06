@@ -41,10 +41,10 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().is(201))
-                .andExpect(jsonPath("$.userId", notNullValue()))
+                .andExpect(jsonPath("$.user_id", notNullValue()))
                 .andExpect(jsonPath("$.email", equalTo("test1@gmail.com")))
-                .andExpect(jsonPath("$.createdDate", notNullValue()))
-                .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
+                .andExpect(jsonPath("$.created_date", notNullValue()))
+                .andExpect(jsonPath("$.last_modified_date", notNullValue()));
 
         // 檢查資料庫中的密碼不為明碼
         mockMvc.perform(MockMvcRequestBuilders
@@ -52,10 +52,10 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("$.userId", notNullValue()))
+                .andExpect(jsonPath("$.user_id", notNullValue()))
                 .andExpect(jsonPath("$.email", equalTo("test1@gmail.com")))
-                .andExpect(jsonPath("$.createdDate", notNullValue()))
-                .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
+                .andExpect(jsonPath("$.created_date", notNullValue()))
+                .andExpect(jsonPath("$.last_modified_date", notNullValue()));
     }
 
     @Test
@@ -123,10 +123,10 @@ public class UserControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(200))
-                .andExpect(jsonPath("$.userId", notNullValue()))
+                .andExpect(jsonPath("$.user_id", notNullValue()))
                 .andExpect(jsonPath("$.email", equalTo(userRegisterRequestDTO.getEmail())))
-                .andExpect(jsonPath("$.createdDate", notNullValue()))
-                .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
+                .andExpect(jsonPath("$.created_date", notNullValue()))
+                .andExpect(jsonPath("$.last_modified_date", notNullValue()));
     }
 
     @Test

@@ -51,12 +51,12 @@ public class OrderControllerTest {
 
         mockMvc.perform(requestBuilder)
                 .andExpect(status().is(201))
-                .andExpect(jsonPath("$.orderId", notNullValue()))
-                .andExpect(jsonPath("$.userId", equalTo(1)))
-                .andExpect(jsonPath("$.totalAmount", equalTo(750)))
-                .andExpect(jsonPath("$.orderItemDTOList", hasSize(2)))
-                .andExpect(jsonPath("$.createdDate", notNullValue()))
-                .andExpect(jsonPath("$.lastModifiedDate", notNullValue()));
+                .andExpect(jsonPath("$.order_id", notNullValue()))
+                .andExpect(jsonPath("$.user_id", equalTo(1)))
+                .andExpect(jsonPath("$.total_amount", equalTo(750)))
+                .andExpect(jsonPath("$.order_items", hasSize(2)))
+                .andExpect(jsonPath("$.created_date", notNullValue()))
+                .andExpect(jsonPath("$.last_modified_date", notNullValue()));
     }
 
     @Transactional
@@ -142,18 +142,18 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.page", notNullValue()))
                 .andExpect(jsonPath("$.total", notNullValue()))
                 .andExpect(jsonPath("$.results", hasSize(2)))
-                .andExpect(jsonPath("$.results[0].orderId", notNullValue()))
-                .andExpect(jsonPath("$.results[0].userId", equalTo(1)))
-                .andExpect(jsonPath("$.results[0].totalAmount", equalTo(100000)))
-                .andExpect(jsonPath("$.results[0].orderItemDTOList", hasSize(1)))
-                .andExpect(jsonPath("$.results[0].createdDate", notNullValue()))
-                .andExpect(jsonPath("$.results[0].lastModifiedDate", notNullValue()))
-                .andExpect(jsonPath("$.results[1].orderId", notNullValue()))
-                .andExpect(jsonPath("$.results[1].userId", equalTo(1)))
-                .andExpect(jsonPath("$.results[1].totalAmount", equalTo(500690)))
-                .andExpect(jsonPath("$.results[1].orderItemDTOList", hasSize(3)))
-                .andExpect(jsonPath("$.results[1].createdDate", notNullValue()))
-                .andExpect(jsonPath("$.results[1].lastModifiedDate", notNullValue()));
+                .andExpect(jsonPath("$.results[0].order_id", notNullValue()))
+                .andExpect(jsonPath("$.results[0].user_id", equalTo(1)))
+                .andExpect(jsonPath("$.results[0].total_amount", equalTo(100000)))
+                .andExpect(jsonPath("$.results[0].order_items", hasSize(1)))
+                .andExpect(jsonPath("$.results[0].created_date", notNullValue()))
+                .andExpect(jsonPath("$.results[0].last_modified_date", notNullValue()))
+                .andExpect(jsonPath("$.results[1].order_id", notNullValue()))
+                .andExpect(jsonPath("$.results[1].user_id", equalTo(1)))
+                .andExpect(jsonPath("$.results[1].total_amount", equalTo(500690)))
+                .andExpect(jsonPath("$.results[1].order_items", hasSize(3)))
+                .andExpect(jsonPath("$.results[1].created_date", notNullValue()))
+                .andExpect(jsonPath("$.results[1].last_modified_date", notNullValue()));
     }
 
     @Test
