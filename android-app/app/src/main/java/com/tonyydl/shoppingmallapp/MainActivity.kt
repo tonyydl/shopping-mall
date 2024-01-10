@@ -10,11 +10,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.tonyydl.shoppingmallapp.ui.login.LoginScreen
-import com.tonyydl.shoppingmallapp.ui.product.ProductScreen
+import com.tonyydl.shoppingmallapp.ui.product.details.ProductDetailsScreen
+import com.tonyydl.shoppingmallapp.ui.product.list.ProductListScreen
 import com.tonyydl.shoppingmallapp.ui.theme.ShoppingMallTheme
 
 class MainActivity : ComponentActivity() {
@@ -42,15 +44,37 @@ class MainActivity : ComponentActivity() {
                     composable(route = Login.route) {
                         LoginScreen(
                             onLoginSuccess = {
-                                navController.navigate(Product.route)
+                                navController.navigateToProductList()
                             },
                             onLoginFailed = {
                                 showToastMessage(it.asString(context))
                             }
                         )
                     }
-                    composable(route = Product.route) {
-                        ProductScreen()
+                    composable(route = ProductList.route) {
+                        ProductListScreen { product ->
+                            navController.navigateToProductDetails(
+                                productId = product.productId,
+                                productName = product.productName
+                            )
+                        }
+                    }
+                    composable(
+                        route = ProductDetails.routeWithArg,
+                        arguments = ProductDetails.arguments
+                    ) { navBackStackEntry ->
+                        val productId =
+                            navBackStackEntry.arguments?.getInt(ProductDetails.productIdArg) ?: 0
+                        val productName =
+                            navBackStackEntry.arguments?.getString(ProductDetails.productNameArg)
+                                .orEmpty()
+                        ProductDetailsScreen(
+                            productId = productId,
+                            productName = productName,
+                            onGetProductFailed = {
+                                showToastMessage(it.asString(context))
+                            }
+                        )
                     }
                 }
             }
@@ -59,5 +83,13 @@ class MainActivity : ComponentActivity() {
 
     private fun showToastMessage(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun NavHostController.navigateToProductList() {
+        navigate(ProductList.route)
+    }
+
+    private fun NavHostController.navigateToProductDetails(productId: Int, productName: String) {
+        this.navigate("${ProductDetails.route}/${productId}/${productName}")
     }
 }

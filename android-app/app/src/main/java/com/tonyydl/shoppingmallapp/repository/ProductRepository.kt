@@ -11,4 +11,8 @@ class ProductRepository(private val productService: ProductService) {
         size: Int? = null,
         sort: String? = null
     ) = productService.getProducts(category, search, page, size, sort)
+
+    suspend fun getProductById(
+        productId: Int? = null
+    ) = productService.getProductById(productId)
 }

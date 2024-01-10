@@ -10,7 +10,6 @@ import com.tonyydl.shoppingmallapp.repository.UserRepository
 import com.tonyydl.shoppingmallapp.service.RetrofitManager
 import com.tonyydl.shoppingmallapp.utils.StringValue
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class LoginViewModel : BaseViewModel<LoginUiState, LoginUiEvent>() {
     override fun setInitialState(): LoginUiState = LoginUiState()

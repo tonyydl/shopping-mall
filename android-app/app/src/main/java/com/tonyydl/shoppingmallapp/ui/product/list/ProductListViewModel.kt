@@ -1,14 +1,13 @@
-package com.tonyydl.shoppingmallapp.ui.product
+package com.tonyydl.shoppingmallapp.ui.product.list
 
 import androidx.lifecycle.viewModelScope
 import com.tonyydl.shoppingmallapp.BaseViewModel
 import com.tonyydl.shoppingmallapp.repository.ProductRepository
 import com.tonyydl.shoppingmallapp.service.RetrofitManager
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
-class ProductViewModel : BaseViewModel<ProductUiState, ProductUiEvent>() {
-    override fun setInitialState(): ProductUiState = ProductUiState()
+class ProductListViewModel : BaseViewModel<ProductListUiState, ProductListUiEvent>() {
+    override fun setInitialState(): ProductListUiState = ProductListUiState()
 
     private val productRepository by lazy { ProductRepository(RetrofitManager.productService) }
 
@@ -16,7 +15,7 @@ class ProductViewModel : BaseViewModel<ProductUiState, ProductUiEvent>() {
         getProducts()
     }
 
-    private fun getProducts() {
+    fun getProducts() {
         viewModelScope.launch {
             state = state.copy(isLoading = true)
             try {
