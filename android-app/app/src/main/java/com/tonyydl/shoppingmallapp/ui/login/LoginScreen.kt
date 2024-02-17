@@ -38,8 +38,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tonyydl.shoppingmallapp.R
 import com.tonyydl.shoppingmallapp.ui.theme.ShoppingMallTheme
 import com.tonyydl.shoppingmallapp.utils.StringValue
@@ -47,7 +47,7 @@ import com.tonyydl.shoppingmallapp.utils.StringValue
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    loginViewModel: LoginViewModel = viewModel(),
+    loginViewModel: LoginViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit = { },
     onLoginFailed: (StringValue) -> Unit = { _ -> },
 ) {

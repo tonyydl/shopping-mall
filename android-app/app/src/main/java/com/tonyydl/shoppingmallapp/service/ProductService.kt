@@ -22,4 +22,8 @@ interface ProductService {
     suspend fun getProductById(
         @Path("id") productId: Int?
     ): ProductDTO
+
+    companion object {
+
+    }
 }

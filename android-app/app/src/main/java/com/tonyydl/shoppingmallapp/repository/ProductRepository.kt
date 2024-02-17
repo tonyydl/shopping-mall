@@ -2,8 +2,11 @@ package com.tonyydl.shoppingmallapp.repository
 
 import com.tonyydl.shoppingmallapp.data.ProductCategory
 import com.tonyydl.shoppingmallapp.service.ProductService
+import javax.inject.Inject
 
-class ProductRepository(private val productService: ProductService) {
+class ProductRepository @Inject constructor(
+    private val productService: ProductService
+) {
     suspend fun getProducts(
         category: ProductCategory? = null,
         search: String? = null,

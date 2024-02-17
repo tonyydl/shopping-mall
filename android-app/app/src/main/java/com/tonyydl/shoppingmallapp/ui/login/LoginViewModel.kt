@@ -7,14 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.tonyydl.shoppingmallapp.BaseViewModel
 import com.tonyydl.shoppingmallapp.R
 import com.tonyydl.shoppingmallapp.repository.UserRepository
-import com.tonyydl.shoppingmallapp.service.RetrofitManager
 import com.tonyydl.shoppingmallapp.utils.StringValue
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel : BaseViewModel<LoginUiState, LoginUiEvent>() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : BaseViewModel<LoginUiState, LoginUiEvent>() {
     override fun setInitialState(): LoginUiState = LoginUiState()
-
-    private val userRepository by lazy { UserRepository(RetrofitManager.userService) }
 
     var account by mutableStateOf("")
         private set

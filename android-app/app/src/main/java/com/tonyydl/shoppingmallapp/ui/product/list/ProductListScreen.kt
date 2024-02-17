@@ -26,8 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tonyydl.shoppingmallapp.R
 import com.tonyydl.shoppingmallapp.data.vo.Product
 import com.tonyydl.shoppingmallapp.ui.base.SimpleImage
@@ -37,7 +37,7 @@ import com.tonyydl.shoppingmallapp.ui.theme.ShoppingMallTheme
 @Composable
 fun ProductListScreen(
     modifier: Modifier = Modifier,
-    viewModel: ProductListViewModel = viewModel(),
+    viewModel: ProductListViewModel = hiltViewModel(),
     onProductClicked: (Product) -> Unit = { _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

@@ -22,8 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tonyydl.shoppingmallapp.R
 import com.tonyydl.shoppingmallapp.data.ProductCategory
 import com.tonyydl.shoppingmallapp.ui.base.SimpleImage
@@ -34,7 +34,7 @@ fun ProductDetailsScreen(
     productId: Int,
     productName: String,
     modifier: Modifier = Modifier,
-    viewModel: ProductDetailsViewModel = viewModel(),
+    viewModel: ProductDetailsViewModel = hiltViewModel(),
     onGetProductFailed: (StringValue) -> Unit = { _ -> }
 ) {
     LaunchedEffect(Unit) {

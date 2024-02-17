@@ -3,13 +3,15 @@ package com.tonyydl.shoppingmallapp.ui.product.list
 import androidx.lifecycle.viewModelScope
 import com.tonyydl.shoppingmallapp.BaseViewModel
 import com.tonyydl.shoppingmallapp.repository.ProductRepository
-import com.tonyydl.shoppingmallapp.service.RetrofitManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProductListViewModel : BaseViewModel<ProductListUiState, ProductListUiEvent>() {
+@HiltViewModel
+class ProductListViewModel @Inject constructor(
+    private val productRepository: ProductRepository
+): BaseViewModel<ProductListUiState, ProductListUiEvent>() {
     override fun setInitialState(): ProductListUiState = ProductListUiState()
-
-    private val productRepository by lazy { ProductRepository(RetrofitManager.productService) }
 
     init {
         getProducts()
